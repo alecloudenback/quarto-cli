@@ -135,12 +135,11 @@ function render_typst_fixups()
         return pandoc.RawInline("typst", "#box(" .. attr_str .. "image(\"" .. escaped_src .. "\"))")
       end
     end,
-    Para = function(para)
-      if #para.content ~= 1 then
-        return nil
-      end
-      local img = quarto.utils.match("[1]/Image")(para)
-      if not img then 
+    Div = function(div)
+      -- local para, img = quarto.utils.match(".cell/[1]/.cell-output-display/[1]/{Para}/[1]/{Image}")(div)
+      local img = quarto.utils.match(".cell/[1]/.cell-output-display/[1]/Para/[1]/Image")(div)
+      local para = quarto.utils.match(".cell/[1]/.cell-output-display/[1]/Para")(div)
+      if not img or #para.content ~= 1 then
         return nil
       end
       local align = img.attributes["fig-align"]
