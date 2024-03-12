@@ -22,7 +22,7 @@ class Trie:
         if not self.children:
             return self.values
         return {k: v.json() for k, v in self.children.items()}
-    
+
     def tabulator_leaf(self):
         result = {}
         for v in self.values:
@@ -59,7 +59,7 @@ class Trie:
         if not self.children:
             return 1
         return sum([v.size() for v in self.children.values()])
-    
+
     def walk(self, visitor, path = None):
         if path is None:
             path = []
@@ -101,10 +101,14 @@ def table_cell(entry, _feature, _format_name, format_config):
         result.append(f"<span title='{comment}'>&#x1F4AC;</span>")
     return "".join(result)
 
-def compute_trie():
+def compute_trie(detailed = False):
     trie = Trie()
-    for entry in glob.glob("qmd-files/**/document.qmd", recursive=True):
-        feature = entry.split("/")[1:-1]
+    pattern = "qmd-files/**/*.qmd" if detailed else "qmd-files/**/document.qmd"
+    for entry in glob.glob(pattern, recursive=True):
+        if detailed:
+            feature = entry.split("/")[1:]
+        else:
+            feature = entry.split("/")[1:-1]
         front_matter = extract_metadata_from_file(entry)
         try:
             format = front_matter["format"]
